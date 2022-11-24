@@ -17,16 +17,17 @@ $stmt->bind_result($name, $role);
 $row = $stmt->fetch();
 $stmt->close();
 if($role==1){
-    $dr_stmt = $conn->prepare("SELECT members.full_name, lectures.LECTURE_NAME, lectures.start_at, lectures.end_at FROM members, lectures WHERE members.card_id=? GROUP BY members.card_id");
+    $dr_stmt = $conn->prepare("SELECT members.full_name, lectures.LECTURE_NAME, lectures.start_at, lectures.end_at FROM members, lectures WHERE members.card_id=?");
     $dr_stmt->bind_param("s",$id);
     $dr_stmt->execute();
     $dr_stmt->bind_result($dr_name, $lectures, $start_at, $end_at);
-    $dr_row = $dr_stmt->fetch();
-    echo "DR|".$dr_name."|".$lectures."|".$start_at."|".$end_at;
+    while($dr_stmt->fetch()){
+    echo "DR|".$dr_name."|".$lectures."|".$start_at."|".$end_at."<br>";
+    }
     $dr_stmt->close();
 }
 elseif($role==0){
-    echo "SD:".$name;
+    echo "SD|".$name;
 }
 $conn->close();
 ?>
