@@ -17,7 +17,7 @@ $stmt->bind_result($name, $role);
 $row = $stmt->fetch();
 $stmt->close();
 if($role==1){
-    $dr_stmt = $conn->prepare("SELECT members.full_name, lectures.LECTURE_NAME, lectures.start_at, lectures.end_at FROM members, lectures WHERE members.card_id=?");
+    $dr_stmt = $conn->prepare("SELECT members.full_name, lectures.LECTURE_NAME, lectures.start_at, lectures.end_at FROM members, lectures WHERE members.card_id=? AND members.card_id=lectures.card_id");
     $dr_stmt->bind_param("s",$id);
     $dr_stmt->execute();
     $dr_stmt->bind_result($dr_name, $lectures, $start_at, $end_at);
