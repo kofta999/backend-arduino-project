@@ -1,23 +1,27 @@
+# Importing Libraries
+import serial
+import time
 import sqlite3
-# from faker import Faker
-# fake = Faker()
-# Initalize connection to DB
+arduino = serial.Serial(port='COM2', baudrate=9600, timeout=.1)
 connection = sqlite3.connect("project.db")
 cursor = connection.cursor()
 
-# Random Name, ID generator for providiing fake data.
-# for i in range(1,10):
-#     query = """INSERT INTO members (full_name, card_id, dr) VALUES ("{}", '{}', "{}")""".format(fake.first_name(), fake.ean(length=8), i%2)
-#     cursor.execute(query)
-#     connection.commit()
-#     print(cursor.rowcount, "Record inserted successfully into table")
+def write_read():
+    time.sleep(0.05)
+    data = arduino.readline()
+    return data
 
 def get_data_from_db(card_id):
     """To get data based on card_id"""
-    cursor.execute("SELECT members.full_name, lectures.LECTURE_NAME, members.card_id, lectures.start_at, lectures.end_at FROM members, lectures WHERE members.card_id='{}' AND members.card_id=lectures.card_id".format(card_id))
-    return cursor.fetchall()
+    cursor.execute("SELECT members.full_name FROM members, lectures WHERE members.card_id='{}' AND members.card_id=lectures.card_id".format(card_id))
+    return cursor.fetchone()[0]
 
-#get_data_from_db("A1")
+while True:
+    num = input("Enter a number: ") # Taking input from user
+    value = write_read().strip()
+    print(value)
+    value = value.decode('utf-8')
+    print(get_data_from_db(value))
 
 
 
