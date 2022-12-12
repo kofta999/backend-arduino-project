@@ -1,30 +1,26 @@
-import mysql.connector
-from mysql.connector import Error
-from faker import Faker
-fake = Faker()
+import sqlite3
+# from faker import Faker
+# fake = Faker()
+# Initalize connection to DB
+connection = sqlite3.connect("project.db")
+cursor = connection.cursor()
 
-try:
-    connection = mysql.connector.connect(host='localhost',
-                                         database='students_test_db',
-                                         user='root')
-    if connection.is_connected():
-        db_Info = connection.get_server_info()
-        print("Connected to MySQL Server version ", db_Info)
-        cursor = connection.cursor()
-        cursor.execute("select database();")
-        record = cursor.fetchone()
-        print("You're connected to database: ", record)
+# Random Name, ID generator for providiing fake data.
+# for i in range(1,10):
+#     query = """INSERT INTO members (full_name, card_id, dr) VALUES ("{}", '{}', "{}")""".format(fake.first_name(), fake.ean(length=8), i%2)
+#     cursor.execute(query)
+#     connection.commit()
+#     print(cursor.rowcount, "Record inserted successfully into table")
 
-#         for i in range(1,10):
-#             query = """INSERT INTO students_docs_test_table	(card_id, id, name, role) VALUES ("1q2w3e4r5t", {}, "{}", 'student')""".format(i, fake.first_name())
-#             cursor.execute(query)
-#             connection.commit()
-#             print(cursor.rowcount, "Record inserted successfully into Laptop table")
+def get_data_from_db(card_id):
+    """To get data based on card_id"""
+    cursor.execute("SELECT members.full_name, lectures.LECTURE_NAME, members.card_id, lectures.start_at, lectures.end_at FROM members, lectures WHERE members.card_id='{}' AND members.card_id=lectures.card_id".format(card_id))
+    return cursor.fetchall()
 
-except Error as e:
-    print("Error while connecting to MySQL", e)
-finally:
-    if connection.is_connected():
-        cursor.close()
-        connection.close()
-        print("MySQL connection is closed")
+#get_data_from_db("A1")
+
+
+
+
+
+connection.close()
